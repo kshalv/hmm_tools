@@ -29,6 +29,7 @@ python hmm_tools.py hmm [-g genome directory path] [-hm HMM directory path] [-f 
 
 
 To run '**seq**':
+
 ``
 python hmm_tools.py seq [-hi hits directory path] [-g genome directory path] [-hm HMM directory path]
 ``
