@@ -9,13 +9,12 @@ You'll need a set of genomes (organized in their own directory) and a set of HMM
 The HMMER code runs on any set of genomes, so long as they use the ".fna" extension (though the script can be modified to take in other nucleotide file extensions). If you are using genomes supplied by GTDB, these should download with the "_genomic.fna" extension. This works best when you first annotate your genomes using Prokka; instructions and usage can be found here. If you would like to loop Prokka through a directory of genomes, use the following command (put forth by the prokka dev's [here](https://github.com/tseemann/prokka/issues/187)): 
 
 ``
+
     for F in ../_genomic.fna; do  
-    
     N=$(basename $F _genomic.fna) ;   
-    
     prokka --gcode 15 --locustag $N --outdir $N --prefix $N  $F ; 
-    
     done  
+    
 ``
 
 ### Step 3: 
