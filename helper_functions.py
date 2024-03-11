@@ -75,6 +75,7 @@ def hmmer_parser(root_dir, hmm_dir):
         bestscore = {}
         # initialize count of hmm's
         h_count = 0
+        
         for hmm in hmms:
             h_count += 1
             with open(root_dir + archaea + '/' + hmm + '_out.txt', 'r') as f:
@@ -83,11 +84,8 @@ def hmmer_parser(root_dir, hmm_dir):
                     result = HP.next()
                     if result is None:
                         break       
-                    # pulls the gene ID (genome ID + '_gene')
+
                     gene = str(result).split('\t')[0]
-                    # checks if the gene is already in the besteval dictionary & replaces the entry if the e-value is smaller
-                    # otherwise, adds the value for that gene to the besteval dictionary if it has an e-value < 0.001
-                    # if the gene has an e-value of < 0.001, then its score also gets added to the bestscore dictionary
                     if gene in besthmmhit:
                         if bestevalhit[gene] > float(str(result).split('\t')[6]):
                             bestevalhit[gene] = float(str(result).split('\t')[6])
@@ -109,7 +107,6 @@ def hmmer_parser(root_dir, hmm_dir):
 
 
 # filter hits by the score threshold designated in the profile hmm
-# write to an output .csv
 def filt_count(hmm_dir, hit_dir, option): 
     hmm_dir = hmm_dir+'/'
     hit_dir = hit_dir+'/'
