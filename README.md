@@ -10,8 +10,11 @@ The HMMER code runs on any set of genomes, so long as they use the ".fna" extens
 
 ``
     for F in ../_genomic.fna; do  
+    
     N=$(basename $F _genomic.fna) ;   
-    prokka --gcode 15 --locustag $N --outdir $N --prefix $N  $F ;  
+    
+    prokka --gcode 15 --locustag $N --outdir $N --prefix $N  $F ; 
+    
     done  
 ``
 
