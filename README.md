@@ -19,10 +19,13 @@ The HMMER code runs on any set of genomes, so long as they use the ".fna" extens
 
 ### Step 3: 
 Run the code! This code has two major options: 1. 'hmm' which loops through all hmm's, thresholds, & counts hits, & 2. 'seq' which uses the thresholded hmm hits to pull sequences from the prokka annotated .faa files for downstream phylogenetic analyses. 
+
 To run '**hmm**'
 `` 
 python hmm_blah.py hmm [-g genome directory path] [-hm HMM directory path] [-f {all, threshold}]
 ``
+
+
 To run '**seq**'
 ``
 python hmm_blah.py seq [-hi hits directory path] [-g genome directory path] [-hm HMM directory path]
