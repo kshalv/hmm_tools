@@ -26,7 +26,8 @@ def hmmer_run(root_dir, hmm_dir):
 
     for file in os.listdir(hmm_dir):
         if not file.startswith('.DS_Store'):
-            hmms.append(file.split('.HMM')[0])
+            file = file.lower()
+            hmms.append(file.split('.hmm')[0])
 
     print('HMM Input List:\t'+str(hmms))
     print('Number of Genomes:  '+str(len(archaea_genomes))+'\n')
