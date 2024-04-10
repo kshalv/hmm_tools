@@ -43,7 +43,7 @@ def hmmer_run(root_dir, hmm_dir):
     return output_dir
     
 # parse the hmm output from hmmer
-def hmmer_parser(root_dir, hmm_dir):
+def hmmer_parser(root_dir, hmm_dir, evalue):
     dirs = []
     hmms = []
     source = os.getcwd()
@@ -93,7 +93,7 @@ def hmmer_parser(root_dir, hmm_dir):
                             bestscore[gene] = float(str(result).split('\t')[7])
                             besthmmhit[gene] = hmm
                     else:
-                        if float(str(result).split('\t')[6]) < 1e-3:
+                        if float(str(result).split('\t')[6]) < float(evalue):
                             bestevalhit[gene] = float(str(result).split('\t')[6])
                             bestscore[gene] = float(str(result).split('\t')[7])
                             besthmmhit[gene] = hmm
@@ -108,9 +108,9 @@ def hmmer_parser(root_dir, hmm_dir):
 
 
 # filter hits by the score threshold designated in the profile hmm
-def filt_count(hmm_dir, hit_dir, option): 
-    hmm_dir = hmm_dir+'/'
-    hit_dir = hit_dir+'/'
+def filt_count(hmm_dir, hit_dir): 
+    hmm_dir = hmm_dir.strip('/')+'/'
+    hit_dir = hit_dir.strip('/')+'/'
     hmm_paths = []
     score_dict = {}
     dict_list = []
@@ -149,34 +149,21 @@ def filt_count(hmm_dir, hit_dir, option):
             genome_name = part[0]+'_'+part[1]
             genome_dict = {'genome_ID':genome_name}
     
-            if option == 'all':
-                for gene in score_dict:
-                    df_filt = df[(df['score']>=score_dict[gene]) & (df['hmm']==gene)]
-                                    
-                    if df_filt.shape[0]>=1: 
-                        grouped = df_filt.groupby('hmm').size().reset_index(name='Count')
-                        ser = grouped['Count']
-                        genome_dict.update({gene:ser[0]})
-                    else: 
-                        genome_dict.update({gene:0})      
-                dict_list.append(genome_dict)
+            has_hits = False
             
-            else:
-                has_hits = False
+            for gene in score_dict:
+                df_filt = df[(df['score']>=score_dict[gene]) & (df['hmm']==gene)]
                 
-                for gene in score_dict:
-                    df_filt = df[(df['score']>=score_dict[gene]) & (df['hmm']==gene)]
-                    
-                    if df_filt.shape[0]>=1: 
-                        grouped = df_filt.groupby('hmm').size().reset_index(name='Count')
-                        ser = grouped['Count']
-                        genome_dict.update({gene:ser[0]})
-                        has_hits = True
-                    else: 
-                        genome_dict.update({gene:0})
+                if df_filt.shape[0]>=1: 
+                    grouped = df_filt.groupby('hmm').size().reset_index(name='Count')
+                    ser = grouped['Count']
+                    genome_dict.update({gene:ser[0]})
+                    has_hits = True
+                else: 
+                    genome_dict.update({gene:0})
 
-                if has_hits:         
-                    dict_list.append(genome_dict)
+            if has_hits:         
+                dict_list.append(genome_dict)
         
     result_df = pd.DataFrame(dict_list)
     result_df.fillna(0, inplace=True)
@@ -187,14 +174,14 @@ def filt_count(hmm_dir, hit_dir, option):
 
 
 # optional function to pull sequences by hits
-def seq_puller(hit_dir, hmm_dir, genome_dir):
+def seq_puller(hit_dir, hmm_dir, genome_dir, option):
     arch_list = []
     score_dict = {}
     hit_dict = {}
     hmms = []
     output_dir = os.getcwd()+'/seq_out/'
-    hit_dir = hit_dir+'/'
-    genome_dir = genome_dir+'/'
+    hit_dir = hit_dir.strip('/')+'/'
+    genome_dir = genome_dir.strip('/')+'/'
 
     #check to see if output directory exists, makes it if not
     os.makedirs(output_dir, exist_ok=True)
@@ -208,12 +195,14 @@ def seq_puller(hit_dir, hmm_dir, genome_dir):
     #create score dictionary, we'll use this to threshold the hit dataframes
     for file in os.listdir(hmm_dir): 
         if file != '.DS_Store':
+            file=file.strip('/')
             filepath=os.path.join(hmm_dir, file)
             with open(filepath, 'r') as f: 
                 hmm_name = filepath.split('/')[-1].split('.')[0]
-                hmms.append(hmm_name)
-                score = float(f.readlines()[15].split(' ')[4])
-                score_dict.update({hmm_name:score})
+                for line in f: 
+                    if line.startswith('TC'):
+                        score=float(line.strip().split(' ')[4])
+                        score_dict.update({hmm_name:score})
 
     # loop through each hmm in the score dictionary
     for hmm in score_dict.keys():
@@ -231,7 +220,12 @@ def seq_puller(hit_dir, hmm_dir, genome_dir):
 
                 #create list of loci that fit the score cutoff for each hmm
                 df = pd.read_csv(archaea, sep=',')
-                df_filt = df.loc[np.where((df['hmm']==hmm) & (df['score']>=score_dict[hmm]))]
+
+                if opt == 'all':
+                    df_filt = df.loc[np.where(df['hmm']==hmm)]
+                else:
+                    df_filt = df.loc[np.where((df['hmm']==hmm) & (df['score']>=score_dict[hmm]))]
+
                 loci = df_filt['geneID'].tolist()
                 seq_in = seq_in + int(len(loci))
 
