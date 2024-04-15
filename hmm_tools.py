@@ -34,7 +34,7 @@ def main():
 			hit_path = helper_functions.hmmer_parser(out_path, args.hmms, args.evalue)
 		else: 
 			hit_path = helper_functions.hmmer_parser(out_path, args.hmms, 1e-03)
-		helper_functions.filt_count(args.hmms, hit_path, args.filt)
+		helper_functions.filt_count(args.hmms, hit_path)
 	elif args.functions == 'seq':
 		if not args.filter: 
 			print('Error: please specify the --filter option.')

@@ -110,7 +110,7 @@ def hmmer_parser(root_dir, hmm_dir, evalue):
 # filter hits by the score threshold designated in the profile hmm
 def filt_count(hmm_dir, hit_dir): 
     hmm_dir = hmm_dir.strip('/')+'/'
-    hit_dir = hit_dir.strip('/')+'/'
+    hit_dir = '/'+hit_dir.strip('/')+'/'
     hmm_paths = []
     score_dict = {}
     dict_list = []
@@ -148,22 +148,17 @@ def filt_count(hmm_dir, hit_dir):
             part = filepath.split('/')[-1].split('_')
             genome_name = part[0]+'_'+part[1]
             genome_dict = {'genome_ID':genome_name}
-    
-            has_hits = False
             
             for gene in score_dict:
                 df_filt = df[(df['score']>=score_dict[gene]) & (df['hmm']==gene)]
-                
+                                
                 if df_filt.shape[0]>=1: 
                     grouped = df_filt.groupby('hmm').size().reset_index(name='Count')
                     ser = grouped['Count']
                     genome_dict.update({gene:ser[0]})
-                    has_hits = True
                 else: 
-                    genome_dict.update({gene:0})
-
-            if has_hits:         
-                dict_list.append(genome_dict)
+                    genome_dict.update({gene:0})      
+            dict_list.append(genome_dict)
         
     result_df = pd.DataFrame(dict_list)
     result_df.fillna(0, inplace=True)
