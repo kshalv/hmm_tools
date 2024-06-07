@@ -169,7 +169,7 @@ def filt_count(hmm_dir, hit_dir):
 
 
 # optional function to pull sequences by hits
-def seq_puller(hit_dir, hmm_dir, genome_dir, option):
+def seq_puller(hit_dir, hmm_dir, genome_dir, opt):
     arch_list = []
     score_dict = {}
     hit_dict = {}
