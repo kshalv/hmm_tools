@@ -169,7 +169,7 @@ def filt_count(hmm_dir, hit_dir):
 
 
 # optional function to pull sequences by hits
-def seq_puller(hit_dir, hmm_dir, genome_dir, opt):
+def seq_puller(hit_dir, hmm_dir, genome_dir, opt, seq):
     arch_list = []
     score_dict = {}
     hit_dict = {}
@@ -207,11 +207,19 @@ def seq_puller(hit_dir, hmm_dir, genome_dir, opt):
         seq_writ = 0
 
         #intialize empty output file
-        with open(output_dir+hmm+'_seq.fa', 'a+') as f:
+
+        if seq == 'aa':
+            ext = '.faa'
+        elif seq == 'nt':
+            ext = '.ffn'
+        else: 
+            print('Error: seq type not specified')
+
+        with open(output_dir+hmm+'_seq'+ext, 'a+') as f:
             for archaea in arch_list: 
                 i+=1
                 genome = archaea.split('/')[-1].split('_h')[0]
-                faa = genome_dir+genome+'/'+genome+'.faa'
+                infile = genome_dir+genome+'/'+genome+ext
 
                 #create list of loci that fit the score cutoff for each hmm
                 df = pd.read_csv(archaea, sep=',')
@@ -226,7 +234,7 @@ def seq_puller(hit_dir, hmm_dir, genome_dir, opt):
 
                 #parse the fasta file for each genome and write the sequences that are present in the thresholded loci to a new fasta
                 for locus in loci: 
-                    for record in SeqIO.parse(faa, 'fasta'):
+                    for record in SeqIO.parse(infile, 'fasta'):
                         head = record.description
                         gene = head.split()[0][-6:]
                         if record.id == locus: 

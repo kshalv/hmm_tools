@@ -23,6 +23,7 @@ def main():
 	seq_parser.add_argument('-hi', '--hits', help='Path to hmm_hits. This is an intermediate directory produced by hmm searcher.' )
 	seq_parser.add_argument('-hm', '--hmms', help='Path to hmm directory')
 	seq_parser.add_argument('-g', '--genomes', help='Path to genome directory')
+	seq_parser.add_argument('-s', '--sequence', choices=['nt','aa'], help='Specify sequence type. Nucleotide (-nt) or amino acid (-aa)')
 	seq_parser.add_argument('-f', '--filter', choices=['all', 'tc'], help='Specify filtering threshold. "All" removes score threshold, whereas "tc" imposes the TC cutoff from the seed HMM.')
 
 	args = parser.parse_args()
@@ -38,7 +39,7 @@ def main():
 	elif args.functions == 'seq':
 		if not args.filter: 
 			print('Error: please specify the --filter option.')
-		helper_functions.seq_puller(args.hits, args.hmms, args.genomes, args.filter)
+		helper_functions.seq_puller(args.hits, args.hmms, args.genomes, args.filter, args.sequence)
 	else: 
 		print("Invalid function. Use 'hmm' or 'seq'")
 
