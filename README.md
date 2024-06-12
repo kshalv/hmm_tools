@@ -27,7 +27,17 @@ Running the code. This script has two options: 1. 'hmm' which loops through all 
 To run '**hmm**':
 
 `` 
-python hmm_tools.py hmm [-g genome directory path] [-hm HMM directory path] [-e e-value]
+usage: hmm_tools.py hmm [-h] [-g GENOMES] [-hm HMMS] [-e EVALUE]
+
+options:
+  -h, --help            show this help message and exit
+  -g GENOMES, --genomes GENOMES
+                        Path to genome directory
+  -hm HMMS, --hmms HMMS
+                        Path to hmm directory. All files should have a .HMM extension and named
+                        according to gene
+  -e EVALUE, --evalue EVALUE
+                        Specify e-value for parsing hmm output.
 ``
 
 
@@ -35,5 +45,19 @@ python hmm_tools.py hmm [-g genome directory path] [-hm HMM directory path] [-e 
 To run '**seq**':
 
 ``
-python hmm_tools.py seq [-hi hits directory path] [-g genome directory path] [-hm HMM directory path] [-s {nt, aa} sequence option to specify output type, nucleotide or amino acid] [-f {all, tc} filter option to apply the TC score threshold to sequence pulling]
+usage: hmm_tools.py seq [-h] [-hi HITS] [-hm HMMS] [-g GENOMES] [-s {nt,aa}] [-f {all,tc}]
+
+options:
+  -h, --help            show this help message and exit
+  -hi HITS, --hits HITS
+                        Path to hmm_hits. This is an intermediate directory produced by hmm searcher.
+  -hm HMMS, --hmms HMMS
+                        Path to hmm directory
+  -g GENOMES, --genomes GENOMES
+                        Path to genome directory
+  -s {nt,aa}, --sequence {nt,aa}
+                        Specify sequence type. Nucleotide (-nt) or amino acid (-aa)
+  -f {all,tc}, --filter {all,tc}
+                        Specify filtering threshold. "All" removes score threshold, whereas "tc" imposes
+                        the TC cutoff from the seed HMM.
 ``
