@@ -26,7 +26,7 @@ Running the code. This script has two options: 1. 'hmm' which loops through all 
 
 To run '**hmm**':
 
-`` 
+``` 
 usage: hmm_tools.py hmm [-h] [-g GENOMES] [-hm HMMS] [-e EVALUE]
 
 options:
@@ -38,13 +38,14 @@ options:
                         according to gene
   -e EVALUE, --evalue EVALUE
                         Specify e-value for parsing hmm output.
-``
+
+```
 
 
 
 To run '**seq**':
 
-``
+```
 usage: hmm_tools.py seq [-h] [-hi HITS] [-hm HMMS] [-g GENOMES] [-s {nt,aa}] [-f {all,tc}]
 
 options:
@@ -60,4 +61,4 @@ options:
   -f {all,tc}, --filter {all,tc}
                         Specify filtering threshold. "All" removes score threshold, whereas "tc" imposes
                         the TC cutoff from the seed HMM.
-``
+```
