@@ -3,7 +3,8 @@ This is a tool for automating HMM-based gene searches using profile hidden marko
 Some aspects of this work are based on the structure put forth by Gray Chadwick, which can be found at: [Phylogenomic Gene Cluster Display](https://github.com/gchadwick/phylogenomic_gene_cluster_display) 
 
 ## Summary: 
-[hmm-tools_summary.pdf](https://github.com/user-attachments/files/15809243/hmm-tools_summary.pdf)
+![hmm-tools_summary](https://github.com/kshalv/hmm_tools/assets/143134539/97743fe1-b064-44fd-a21e-361bf07759a1)
+
 
 ## Step 1: 
 You'll need a set of genomes (organized in their own directory) and a set of HMMs of interest (organized in their own directory). For the genomes, make sure they have a .fna extension (see step #2 for caveat). The output will use whatever name the HMM file is labelled as (i.e. 'mcrA' for the 'mcrA.HMM' file). For my work, I have used genomes downloaded from GTDB (latest release [here](https://data.gtdb.ecogenomic.org/releases/) & annotated with [prokka](https://github.com/tseemann/prokka), as well as [Biopython](https://biopython.org/), [HMMER](http://hmmer.org/documentation.html) (installs with Prokka, otherwise will have to independently install), and [SimpleHMMER](https://github.com/minillinim/SimpleHMMER/tree/master).
