@@ -27,7 +27,7 @@ Running the code. This script has two options: 1. 'hmm' which loops through all 
 To run '**hmm**':
 
 ``` 
-usage: hmm_tools.py hmm [-h] [-g GENOMES] [-hm HMMS] [-e EVALUE]
+usage: python hmm_tools.py hmm [-h] [-g GENOMES] [-hm HMMS] [-e EVALUE]
 
 options:
   -h, --help            show this help message and exit
@@ -46,7 +46,7 @@ options:
 To run '**seq**':
 
 ```
-usage: hmm_tools.py seq [-h] [-hi HITS] [-hm HMMS] [-g GENOMES] [-s {nt,aa}] [-f {all,tc}]
+usage: python hmm_tools.py seq [-h] [-hi HITS] [-hm HMMS] [-g GENOMES] [-s {nt,aa}] [-f {all,tc}]
 
 options:
   -h, --help            show this help message and exit
