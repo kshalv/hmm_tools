@@ -27,7 +27,7 @@ Running the code. This script has two options: 1. 'hmm' which loops through all 
 To run '**hmm**':
 
 ``` 
-usage: python hmm_tools.py hmm [-h] [-g GENOMES] [-hm HMMS] [-e EVALUE]
+usage: python hmm_tools.py hmm [-h] [-g GENOMES] [-hm HMMS] [-e EVALUE] [-s {tc,nc}]
 
 options:
   -h, --help            show this help message and exit
@@ -38,7 +38,7 @@ options:
                         according to gene
   -e EVALUE, --evalue EVALUE
                         Specify e-value for parsing hmm output.
-  -s {tc,nc}, --score {tc,nc}
+  -sc {tc,nc}, --score {tc,nc}
                         Specify filtering threshold. "TC" uses the trusted cutoff designated in the HMM, whereas "NC" uses the noise cutoff.
 
 ```
