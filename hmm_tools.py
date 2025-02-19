@@ -16,7 +16,7 @@ def main():
 	hmm_parser.add_argument('-g', '--genomes', help='Path to genome directory')
 	hmm_parser.add_argument('-hm', '--hmms', help='Path to hmm directory. All files should have a .HMM extension and named according to gene')
 	hmm_parser.add_argument('-e', '--evalue', help='Specify e-value for parsing hmm output.')
-	hmm_parser.add_argument('-s', '--score', choices=['tc', 'nc'], help='Specify score for parsing hmm output.')
+	hmm_parser.add_argument('-sc', '--score', choices=['tc', 'nc'], help='Specify score for parsing hmm output.')
 
 	# create sub parser for sequence pulling
 	seq_parser = subparsers.add_parser('seq', help='Run for sequence pulling from hmm hits.')
