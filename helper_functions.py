@@ -108,9 +108,9 @@ def hmmer_parser(root_dir, hmm_dir, evalue):
 
 
 # filter hits by the score threshold designated in the profile hmm
-def filt_count(hmm_dir, hit_dir): 
-    hmm_dir = hmm_dir.strip('/')+'/'
-    hit_dir = '/'+hit_dir.strip('/')+'/'
+def filt_count(hmm_dir, hit_dir, thresh):
+    hmm_dir = hmm_dir.strip('/') + '/'
+    hit_dir = '/' + hit_dir.strip('/') + '/'
     hmm_paths = []
     score_dict = {}
     dict_list = []
@@ -119,53 +119,52 @@ def filt_count(hmm_dir, hit_dir):
     output_file = './hmm_counts-filtering.csv'
 
     # records all hmm file paths in a list (hmm_paths), hmm name & threshold scores a dictionary (score_dict), & hmm names for output columns
-    for file in os.listdir(hmm_dir): 
+    for file in os.listdir(hmm_dir):
         if file != '.DS_Store':
-            filepath=os.path.join(hmm_dir, file)
+            filepath = os.path.join(hmm_dir, file)
             hmm_paths.append(filepath)
 
-            with open(filepath, 'r') as f: 
+            with open(filepath, 'r') as f:
                 hmm_name = filepath.split('/')[-1].split('.')[0]
-                for line in f: 
-                    if line.startswith('TC'):
+                for line in f:
+                    if line.startswith(str(thresh)):
                         score = float(line.strip().split(' ')[4])
-                        score_dict.update({hmm_name:score})
+                        score_dict.update({hmm_name: score})
                 col_list.append(hmm_name)
 
     # initializes empty dataframe to record counts
     result_df = pd.DataFrame(columns=col_list)
-    
 
     # loop through all files in the hmm hit directories and creates a genome specific dictionary that contains the hmm name & count
-    # for all hmm hits that exceed the score threshold denoted by the .HMM file 
-    i=0
+    # for all hmm hits that exceed the score threshold denoted by the .HMM file
+    i = 0
     for file in os.listdir(hit_dir):
         if file.endswith('.csv'):
-            i+=1
+            i += 1
             filepath = os.path.join(hit_dir, file)
-            df = pd.read_csv(filepath, sep=',')  
-            
+            df = pd.read_csv(filepath, sep=',')
+
             part = filepath.split('/')[-1].split('_')
-            genome_name = part[0]+'_'+part[1]
-            genome_dict = {'genome_ID':genome_name}
-            
+            genome_name = part[0] + '_' + part[1]
+            genome_dict = {'genome_ID': genome_name}
+
             for gene in score_dict:
-                df_filt = df[(df['score']>=score_dict[gene]) & (df['hmm']==gene)]
-                                
-                if df_filt.shape[0]>=1: 
+                df_filt = df[(df['score'] >= score_dict[gene]) & (df['hmm'] == gene)]
+
+                if df_filt.shape[0] >= 1:
                     grouped = df_filt.groupby('hmm').size().reset_index(name='Count')
                     ser = grouped['Count']
-                    genome_dict.update({gene:ser[0]})
-                else: 
-                    genome_dict.update({gene:0})      
+                    genome_dict.update({gene: ser[0]})
+                else:
+                    genome_dict.update({gene: 0})
             dict_list.append(genome_dict)
-        
+
     result_df = pd.DataFrame(dict_list)
     result_df.fillna(0, inplace=True)
     result_df.to_csv(output_file, index=False)
     print(score_dict)
-    print('number of hmm hit files: '+str(i))
-    print('number of output rows: '+str(result_df.shape[0]))
+    print('number of hmm hit files: ' + str(i))
+    print('number of output rows: ' + str(result_df.shape[0]))
 
 
 # optional function to pull sequences by hits
