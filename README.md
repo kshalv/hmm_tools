@@ -38,6 +38,8 @@ options:
                         according to gene
   -e EVALUE, --evalue EVALUE
                         Specify e-value for parsing hmm output.
+  -s {tc,nc}, --score {tc,nc}
+                        Specify filtering threshold. "TC" uses the trusted cutoff designated in the HMM, whereas "NC" uses the noise cutoff.
 
 ```
 
