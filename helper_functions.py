@@ -187,16 +187,17 @@ def seq_puller(hit_dir, hmm_dir, genome_dir, opt, seq):
             arch_list.append(filepath)
 
     #create score dictionary, we'll use this to threshold the hit dataframes
-    for file in os.listdir(hmm_dir): 
-        if file != '.DS_Store':
-            file=file.strip('/')
-            filepath=os.path.join(hmm_dir, file)
-            with open(filepath, 'r') as f: 
-                hmm_name = filepath.split('/')[-1].split('.')[0]
-                for line in f: 
-                    if line.startswith('TC'):
-                        score=float(line.strip().split(' ')[4])
-                        score_dict.update({hmm_name:score})
+    if str(opt) != 'all':
+        for file in os.listdir(hmm_dir):
+            if file != '.DS_Store':
+                file=file.strip('/')
+                filepath=os.path.join(hmm_dir, file)
+                with open(filepath, 'r') as f:
+                    hmm_name = filepath.split('/')[-1].split('.')[0]
+                    for line in f:
+                        if line.startswith(str(opt).upper()):
+                            score=float(line.strip().split(' ')[4])
+                            score_dict.update({hmm_name:score})
 
     # loop through each hmm in the score dictionary
     for hmm in score_dict.keys():
