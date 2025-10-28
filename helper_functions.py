@@ -7,6 +7,7 @@ import numpy as np
 from simplehmmer.simplehmmer import HMMERRunner
 from simplehmmer.simplehmmer import HMMERParser
 from Bio import SeqIO
+import re
 
 # loop through a directory of HMM's, against your directory of genomes
 def hmmer_run(root_dir, hmm_dir):
@@ -43,7 +44,7 @@ def hmmer_run(root_dir, hmm_dir):
     return output_dir
     
 # parse the hmm output from hmmer
-def hmmer_parser(root_dir, hmm_dir, evalue):
+def hmmer_parser(root_dir, hmm_dir, evalue, score_option=None):
     dirs = []
     hmms = []
     source = os.getcwd()
@@ -65,6 +66,26 @@ def hmmer_parser(root_dir, hmm_dir, evalue):
     # print the number of archaeal genomes recorded in the hmm_dirs list. this should be the same as your total # of genomes
     print('number of genomes (input): ' + str(len(dirs)))
 
+    score_cutoffs = {}
+    if score_option in ['TC', 'NC']:
+        print(f"Applying {score_option} cutoff from HMM file")
+        for file in os.listdir(hmm_dir):
+            if file.lower().endswith('.HMM'):
+                filepath = os.path.join(hmm_dir, file)
+                hmm_name = file.split('.')[0]
+                with open(filepath, 'r') as f: 
+                    for line in f: 
+                        if line.startswith(score_option):
+                            parts = re.split(r'\s+', line.strip())
+                            try: 
+                                score_cutoffs[hmm_name] =float(parts[-1])
+                            except ValueError: 
+                                continue
+        print(f"Loaded score threshold for {len(score_cutoffs)} HMMs.")
+    else: 
+        print("--score option not specified. Parsing by e-value alone.")
+ 
+
     i = 0
     for archaea in dirs:
         i += 1
@@ -85,18 +106,35 @@ def hmmer_parser(root_dir, hmm_dir, evalue):
                     result = HP.next()
                     if result is None:
                         break       
+                    parts = str(result).split('\t')
+                    gene = parts[0]
+                    e_val = float(parts[6])
+                    score_val = float(parts[7])
 
-                    gene = str(result).split('\t')[0]
-                    if gene in besthmmhit:
-                        if bestevalhit[gene] > float(str(result).split('\t')[6]):
-                            bestevalhit[gene] = float(str(result).split('\t')[6])
-                            bestscore[gene] = float(str(result).split('\t')[7])
-                            besthmmhit[gene] = hmm
-                    else:
-                        if float(str(result).split('\t')[6]) < float(evalue):
-                            bestevalhit[gene] = float(str(result).split('\t')[6])
-                            bestscore[gene] = float(str(result).split('\t')[7])
-                            besthmmhit[gene] = hmm
+                    if e_val > float(evalue):
+                        continue
+
+                    if score_option in ['TC', 'NC']:
+                        if hmm in score_cutoffs and score_val < score_cutoffs[hmm]:
+                            continue
+
+                    if gene not in besthmmhit or e_val < bestevalhit[gene]:
+                        bestevalhit[gene] = e_val
+                        bestscore[gene] = score_val
+                        besthmmhit[gene] = hmm
+
+
+                    # gene = str(result).split('\t')[0]
+                    # if gene in besthmmhit:
+                    #     if bestevalhit[gene] > float(str(result).split('\t')[6]):
+                    #         bestevalhit[gene] = float(str(result).split('\t')[6])
+                    #         bestscore[gene] = float(str(result).split('\t')[7])
+                    #         besthmmhit[gene] = hmm
+                    # else:
+                    #     if float(str(result).split('\t')[6]) < float(evalue):
+                    #         bestevalhit[gene] = float(str(result).split('\t')[6])
+                    #         bestscore[gene] = float(str(result).split('\t')[7])
+                    #         besthmmhit[gene] = hmm
         
         with open(output_file, 'w') as f: 
             f.write('geneID,hmm,eval,score\n')
@@ -108,7 +146,7 @@ def hmmer_parser(root_dir, hmm_dir, evalue):
 
 
 # filter hits by the score threshold designated in the profile hmm
-def filt_count(hmm_dir, hit_dir): 
+def filt_count(hmm_dir, hit_dir, thresh): 
     hmm_dir = hmm_dir.strip('/')+'/'
     hit_dir = '/'+hit_dir.strip('/')+'/'
     hmm_paths = []
@@ -127,7 +165,7 @@ def filt_count(hmm_dir, hit_dir):
             with open(filepath, 'r') as f: 
                 hmm_name = filepath.split('/')[-1].split('.')[0]
                 for line in f: 
-                    if line.startswith('TC'):
+                    if line.startswith(str(thresh)):
                         score = float(line.strip().split(' ')[4])
                         score_dict.update({hmm_name:score})
                 col_list.append(hmm_name)

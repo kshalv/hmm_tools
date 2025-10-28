@@ -17,6 +17,7 @@ def main():
 	hmm_parser.add_argument('-g', '--genomes', help='Path to genome directory')
 	hmm_parser.add_argument('-hm', '--hmms', help='Path to hmm directory. All files should have a .HMM extension and named according to gene')
 	hmm_parser.add_argument('-e', '--evalue', help='Specify e-value for parsing hmm output.')
+	hmm_parser.add_argument('-s', '--score', help='Specify score threshold -- TC for trusted cutoff; NC for noise cutoff')
 
 	# create sub parser for sequence pulling
 	seq_parser = subparsers.add_parser('seq', help='Run for sequence pulling from hmm hits.')
@@ -31,11 +32,15 @@ def main():
 	# run code on inputs and outputs
 	if args.functions == 'hmm':
 		out_path = helper_functions.hmmer_run(args.genomes, args.hmms)
-		if args.evalue is not None: 
-			hit_path = helper_functions.hmmer_parser(out_path, args.hmms, args.evalue)
-		else: 
-			hit_path = helper_functions.hmmer_parser(out_path, args.hmms, 1e-03)
-		helper_functions.filt_count(args.hmms, hit_path)
+		if args.evalue is not None:
+			hit_path = helper_functions.hmmer_parser(out_path, args.hmms, args.evalue, args.score)
+		else:
+			hit_path = helper_functions.hmmer_parser(out_path, args.hmms, 1e-03, args.score)
+		if args.score:
+			helper_functions.filt_count(args.hmms, hit_path, args.score)
+		else:
+			print('--score option not specified; skipping filt_count step (will only parse by e-value)')
+	
 	elif args.functions == 'seq':
 		if not args.filter: 
 			print('Error: please specify the --filter option.')
